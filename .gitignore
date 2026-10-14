@@ -147,3 +147,7 @@ vite.config.ts.timestamp-*
 
 # Turbo Repo
 .turbo
+
+# Ignorar secrets reais do Kubernetes
+k8s/2-secrets.yaml
+.env
