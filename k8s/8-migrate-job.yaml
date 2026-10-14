@@ -1,0 +1,26 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: db-migrate
+  namespace: ordoservitii
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: migrate
+          image: ordoservitii-api-migrate:latest 
+          imagePullPolicy: Never 
+          # Adiciona um wait explícito e executa a migração
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              echo "Aguardando PostgreSQL ficar pronto (15s)..."
+              sleep 15
+              echo "Iniciando migração do Drizzle..."
+              npm run db:migrate
+          envFrom:
+            - secretRef:
+                name: ordoservitii-secrets
+            - configMapRef:
+                name: ordoservitii-config

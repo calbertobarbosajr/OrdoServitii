@@ -1,0 +1,28 @@
+# 3-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ordoservitii-config
+  namespace: ordoservitii
+data:
+  NODE_ENV: "production"
+  PORT: "3001"
+  nginx.conf: |
+    events {}
+    http {
+        upstream api {
+            server api:3001;
+        }
+        upstream web {
+            server web:80;
+        }
+        server {
+            listen 80;
+            location /api/ {
+                proxy_pass http://api/;
+            }
+            location / {
+                proxy_pass http://web/;
+            }
+        }
+    }

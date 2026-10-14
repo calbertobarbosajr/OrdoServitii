@@ -1,0 +1,42 @@
+# 11-nginx.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+  namespace: ordoservitii
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:alpine
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: nginx-config
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+      volumes:
+        - name: nginx-config
+          configMap:
+            name: ordoservitii-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+  namespace: ordoservitii
+spec:
+  type: LoadBalancer # Use NodePort se estiver no Minikube/Kind local
+  selector:
+    app: nginx
+  ports:
+    - port: 80
+      targetPort: 80
